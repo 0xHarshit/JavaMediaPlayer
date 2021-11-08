@@ -20,7 +20,12 @@ public class MainWindow extends Application {
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
 
-    private String MEDIA_URL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    // private String MEDIA_URL =
+    // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    // private String MEDIA_URL = "./song.mp3";
+    // String s = getClass().getResourceAsStream("song.mp3").toString();
+    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/song.mp3");
+    private String MEDIA_URL = file.toURI().toString();
 
     @Override
     public void start(Stage stage) throws IOException {
