@@ -3,7 +3,9 @@ package javamediaplayer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,10 +21,15 @@ public class MediaBar extends HBox {
         // Image pause = new
         // Image(getClass().getResourceAsStream("file:assets/pause.png"));
         // ImageView pausew = new ImageView(pause);
+        ComboBox vol = new ComboBox();
+        Slider volSlider = new Slider();
+        volSlider.setOrientation(Orientation.VERTICAL);
+        vol.getItems().add(volSlider);
+        volSlider.setValue(50);
         btnPlay = new Button("||");
         progressSlider = new Slider();
-        int progressMaxWidth = 500;
-        progressSlider.setPrefWidth(progressMaxWidth);
+        // int progressMaxWidth = 500;
+        progressSlider.setPrefWidth(500);
         // progressSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
         // btnPlay = new Button("", pausew);
         btnPlay.setPrefSize(32, 32);
@@ -31,6 +38,9 @@ public class MediaBar extends HBox {
             Double duration = mediaPlayer.getTotalDuration().toSeconds();
             Double CurrTime = mediaPlayer.getCurrentTime().toSeconds();
             progressSlider.setValue((CurrTime / duration) * 100);
+
+        });
+        volSlider.valueProperty().addListener((ob, old, ne) -> {
 
         });
         progressSlider.valueProperty().addListener((ob, old, ne) -> {
@@ -59,8 +69,9 @@ public class MediaBar extends HBox {
                 btnPlay.setText("||");
             }
         });
-
+        mediaPlayer.volumeProperty().bind(volSlider.valueProperty().divide(100));
         getChildren().add(btnPlay);
         getChildren().add(progressSlider);
+        getChildren().add(vol);
     }
 }
