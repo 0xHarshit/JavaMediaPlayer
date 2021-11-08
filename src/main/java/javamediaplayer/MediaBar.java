@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,10 +23,24 @@ public class MediaBar extends HBox {
         // Image pause = new
         // Image(getClass().getResourceAsStream("file:assets/pause.png"));
         // ImageView pausew = new ImageView(pause);
+        Slider speedSlider = new Slider(0.25, 2, 0.25);
+        speedSlider.setBlockIncrement(0.25);
+        speedSlider.setMajorTickUnit(0.25);
+        speedSlider.setMinorTickCount(0);
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setSnapToTicks(true);
+        speedSlider.setValue(1);
+
         ComboBox vol = new ComboBox();
+        ComboBox speed = new ComboBox();
+        speed.setPrefWidth(50);
+        vol.setPrefWidth(50);
         Slider volSlider = new Slider();
         volSlider.setOrientation(Orientation.VERTICAL);
+        speedSlider.setOrientation(Orientation.VERTICAL);
+
         vol.getItems().add(volSlider);
+        speed.getItems().add(speedSlider);
         volSlider.setValue(50);
         btnPlay = new Button("||");
         progressSlider = new Slider();
@@ -38,9 +54,7 @@ public class MediaBar extends HBox {
             Double duration = mediaPlayer.getTotalDuration().toSeconds();
             Double CurrTime = mediaPlayer.getCurrentTime().toSeconds();
             progressSlider.setValue((CurrTime / duration) * 100);
-
-        });
-        volSlider.valueProperty().addListener((ob, old, ne) -> {
+            // System.out.println(mediaPlayer.getRate());
 
         });
         progressSlider.valueProperty().addListener((ob, old, ne) -> {
@@ -70,8 +84,10 @@ public class MediaBar extends HBox {
             }
         });
         mediaPlayer.volumeProperty().bind(volSlider.valueProperty().divide(100));
+        mediaPlayer.rateProperty().bind(speedSlider.valueProperty());
         getChildren().add(btnPlay);
         getChildren().add(progressSlider);
         getChildren().add(vol);
+        getChildren().add(speed);
     }
 }
