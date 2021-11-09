@@ -11,19 +11,21 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.MediaPlayer;
 
-public class MediaBar extends HBox {
+public class MediaBar extends AnchorPane {
     private Button btnPlay;
     private Slider progressSlider;
-    // private ImageView myImageView;
+    private ComboBox vol;
+    private ComboBox speed;
+    private Slider volSlider;
+    private Slider speedSlider;
 
     public MediaBar(MediaPlayer mediaPlayer) {
-        // Image pause = new
-        // Image(getClass().getResourceAsStream("file:assets/pause.png"));
-        // ImageView pausew = new ImageView(pause);
-        Slider speedSlider = new Slider(0.25, 2, 0.25);
+
+        speedSlider = new Slider(0.25, 2, 0.25);
         speedSlider.setBlockIncrement(0.25);
         speedSlider.setMajorTickUnit(0.25);
         speedSlider.setMinorTickCount(0);
@@ -31,24 +33,30 @@ public class MediaBar extends HBox {
         speedSlider.setSnapToTicks(true);
         speedSlider.setValue(1);
 
-        ComboBox vol = new ComboBox();
-        ComboBox speed = new ComboBox();
-        speed.setPrefWidth(50);
-        vol.setPrefWidth(50);
-        Slider volSlider = new Slider();
+        vol = new ComboBox();
+        speed = new ComboBox();
+        volSlider = new Slider();
         volSlider.setOrientation(Orientation.VERTICAL);
         speedSlider.setOrientation(Orientation.VERTICAL);
 
         vol.getItems().add(volSlider);
         speed.getItems().add(speedSlider);
         volSlider.setValue(50);
-        btnPlay = new Button("||");
+        btnPlay = new Button("PLAY");
+        btnPlay.setLayoutY(30);
+        btnPlay.setLayoutX(32);
+        vol.setLayoutX(603);
+        vol.setLayoutY(30);
+        vol.setPromptText("Volume");
+        speed.setLayoutX(701);
+        speed.setLayoutY(30);
+        speed.setPromptText("Speed");
+
         progressSlider = new Slider();
-        // int progressMaxWidth = 500;
         progressSlider.setPrefWidth(500);
-        // progressSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
-        // btnPlay = new Button("", pausew);
-        btnPlay.setPrefSize(32, 32);
+        progressSlider.setPrefSize(692, 14);
+        progressSlider.setLayoutX(54);
+        btnPlay.setPrefSize(60, 26);
         mediaPlayer.currentTimeProperty().addListener((ob, old, n) -> {
             // System.out.println(progressSlider.getMax());
             Double duration = mediaPlayer.getTotalDuration().toSeconds();
@@ -63,7 +71,8 @@ public class MediaBar extends HBox {
                 mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(progressSlider.getValue() / 100));
         });
         btnPlay.setOnAction(e -> {
-            MediaPlayer.Status status = mediaPlayer.getStatus(); // To get the status of Player
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            System.out.println(status); // To get the status of Player
             if (status == MediaPlayer.Status.PLAYING) {
                 // If the status is Video playing
                 if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
@@ -74,13 +83,13 @@ public class MediaBar extends HBox {
                 } else {
                     // Pausing the player
                     mediaPlayer.pause();
-                    btnPlay.setText(">");
+                    btnPlay.setText("PLAY");
                 }
             } // If the video is stopped, halted or paused
             if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
-                    || status == MediaPlayer.Status.PAUSED) {
+                    || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
                 mediaPlayer.play(); // Start the video
-                btnPlay.setText("||");
+                btnPlay.setText("PAUSE");
             }
         });
         mediaPlayer.volumeProperty().bind(volSlider.valueProperty().divide(100));
@@ -89,5 +98,13 @@ public class MediaBar extends HBox {
         getChildren().add(progressSlider);
         getChildren().add(vol);
         getChildren().add(speed);
+    }
+
+    public void relocateX(double w) {
+        speed.setLayoutX(w - 150);
+        vol.setLayoutX(w - 250);
+        btnPlay.setLayoutX((w / 800) * 32);
+        progressSlider.setPrefWidth((w / 800) * 692);
+
     }
 }
