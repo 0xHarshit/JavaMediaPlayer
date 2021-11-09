@@ -31,7 +31,8 @@ public class MainWindow extends Application {
     // private String MEDIA_URL = "./song.mp3";
     // String s = getClass().getResourceAsStream("song.mp3").toString();
     private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
-    private java.io.File icon = new java.io.File("./src/main/java/javamediaplayer/assets/icon.png");
+    // private java.io.File icon = new
+    // java.io.File("./src/main/java/javamediaplayer/assets/icon.png");
     private String MEDIA_URL = file.toURI().toString();
 
     @Override

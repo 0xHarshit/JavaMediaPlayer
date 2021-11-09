@@ -14,6 +14,27 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
+class BtnForward extends Button {
+    public BtnForward(MediaPlayer mediaPlayer) {
+        setText(">");
+        setPrefSize(32, 32);
+        setOnAction(e -> {
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.millis(10000)));
+        });
+    }
+}
+
+class BtnBackward extends Button {
+    public BtnBackward(MediaPlayer mediaPlayer) {
+        setText("<");
+        setPrefSize(32, 32);
+        setOnAction(e -> {
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.millis(10000)));
+        });
+    }
+}
 
 public class MediaBar extends AnchorPane {
     private Button btnPlay;
@@ -22,6 +43,8 @@ public class MediaBar extends AnchorPane {
     private ComboBox speed;
     private Slider volSlider;
     private Slider speedSlider;
+    private Button btnForward;
+    private Button btnBackward;
 
     public MediaBar(MediaPlayer mediaPlayer) {
 
@@ -33,18 +56,29 @@ public class MediaBar extends AnchorPane {
         speedSlider.setSnapToTicks(true);
         speedSlider.setValue(1);
 
+        btnPlay = new Button("PLAY");
+        btnPlay.setLayoutY(30);
+        btnPlay.setLayoutX(60);
+        btnPlay.setPrefSize(60, 26);
+
+        btnForward = new BtnForward(mediaPlayer);
+        btnBackward = new BtnBackward(mediaPlayer);
+        btnForward.setLayoutY(30);
+        btnForward.setLayoutX(134);
+        btnForward.setPrefSize(26, 26);
+        btnBackward.setLayoutY(30);
+        btnBackward.setLayoutX(20);
+        btnBackward.setPrefSize(26, 26);
+        // System.out.println(btnForward.getWidth());
         vol = new ComboBox();
         speed = new ComboBox();
         volSlider = new Slider();
         volSlider.setOrientation(Orientation.VERTICAL);
         speedSlider.setOrientation(Orientation.VERTICAL);
-
         vol.getItems().add(volSlider);
         speed.getItems().add(speedSlider);
         volSlider.setValue(50);
-        btnPlay = new Button("PLAY");
-        btnPlay.setLayoutY(30);
-        btnPlay.setLayoutX(32);
+
         vol.setLayoutX(603);
         vol.setLayoutY(30);
         vol.setPromptText("Volume");
@@ -56,13 +90,11 @@ public class MediaBar extends AnchorPane {
         progressSlider.setPrefWidth(500);
         progressSlider.setPrefSize(692, 14);
         progressSlider.setLayoutX(54);
-        btnPlay.setPrefSize(60, 26);
+
         mediaPlayer.currentTimeProperty().addListener((ob, old, n) -> {
-            // System.out.println(progressSlider.getMax());
             Double duration = mediaPlayer.getTotalDuration().toSeconds();
             Double CurrTime = mediaPlayer.getCurrentTime().toSeconds();
             progressSlider.setValue((CurrTime / duration) * 100);
-            // System.out.println(mediaPlayer.getRate());
 
         });
         progressSlider.valueProperty().addListener((ob, old, ne) -> {
@@ -98,12 +130,14 @@ public class MediaBar extends AnchorPane {
         getChildren().add(progressSlider);
         getChildren().add(vol);
         getChildren().add(speed);
+        getChildren().add(btnBackward);
+        getChildren().add(btnForward);
     }
 
     public void relocateX(double w) {
         speed.setLayoutX(w - 150);
         vol.setLayoutX(w - 250);
-        btnPlay.setLayoutX((w / 800) * 32);
+        // btnPlay.setLayoutX((w / 800) * 60);
         progressSlider.setPrefWidth((w / 800) * 692);
 
     }
