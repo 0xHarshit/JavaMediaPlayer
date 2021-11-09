@@ -1,7 +1,13 @@
 package javamediaplayer;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -24,7 +30,8 @@ public class MainWindow extends Application {
     // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     // private String MEDIA_URL = "./song.mp3";
     // String s = getClass().getResourceAsStream("song.mp3").toString();
-    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/song.mp3");
+    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
+    private java.io.File icon = new java.io.File("./src/main/java/javamediaplayer/assets/icon.png");
     private String MEDIA_URL = file.toURI().toString();
 
     @Override
@@ -32,19 +39,25 @@ public class MainWindow extends Application {
         stage.setTitle("Java Media Player");
 
         borderPane = new BorderPane();
-
         media = new Media(MEDIA_URL);
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setOnReady(stage::sizeToScene);
         mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitWidth(700);
+        mediaBar = new MediaBar(mediaPlayer);
 
         borderPane.setCenter(mediaView);
-
-        mediaBar = new MediaBar(mediaPlayer);
         borderPane.setBottom(mediaBar);
+        borderPane.setPadding(new Insets(10, 20, 10, 20));
 
-        scene = new Scene(borderPane);
+        borderPane.widthProperty().addListener((ob, old, ne) -> {
+            mediaBar.relocateX(ne.doubleValue());
+            mediaView.setFitWidth((ne.doubleValue() / 800) * 600);
+        });
+
+        scene = new Scene(borderPane, 800, 600);
+        stage.getIcons().add(new Image("file:src/main/java/javamediaplayer/assets/icon.png"));
         stage.setScene(scene);
         stage.show();
     }
