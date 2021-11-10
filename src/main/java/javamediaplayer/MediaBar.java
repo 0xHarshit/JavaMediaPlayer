@@ -1,8 +1,10 @@
 package javamediaplayer;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
@@ -113,14 +115,18 @@ class SpeedBox extends ComboBox {
 }
 
 public class MediaBar extends AnchorPane {
+    private BtnPlay btnPlay;
+    private BtnForward btnForward;
+    private BtnBackward btnBackward;
     private VolBox volBox;
     private SpeedBox speedBox;
     private ProgressSlider progressSlider;
+    private Label timeLabel = new Label();
 
     public MediaBar(MediaPlayer mediaPlayer) {
-        BtnPlay btnPlay = new BtnPlay(mediaPlayer);
-        BtnForward btnForward = new BtnForward(mediaPlayer);
-        BtnBackward btnBackward = new BtnBackward(mediaPlayer);
+        btnPlay = new BtnPlay(mediaPlayer);
+        btnForward = new BtnForward(mediaPlayer);
+        btnBackward = new BtnBackward(mediaPlayer);
         progressSlider = new ProgressSlider(mediaPlayer);
         volBox = new VolBox();
         speedBox = new SpeedBox();
@@ -131,9 +137,16 @@ public class MediaBar extends AnchorPane {
             progressSlider.setValue((CurrTime / duration) * 100);
         });
 
+        timeLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+            Duration time = mediaPlayer.getCurrentTime();
+            return String.format("%4d:%02d:%04.1f", (int) time.toHours(), (int) time.toMinutes() % 60,
+                    time.toSeconds() % 3600);
+        }, mediaPlayer.currentTimeProperty()));
+
         mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
         mediaPlayer.rateProperty().bind(speedBox.speedSlider.valueProperty());
-        getChildren().addAll(btnBackward, btnPlay, btnForward, progressSlider, volBox, speedBox);
+        getChildren().addAll(btnBackward, btnPlay, btnForward, progressSlider, volBox, speedBox, timeLabel);
+
     }
 
     public void relocateX(double w) {
