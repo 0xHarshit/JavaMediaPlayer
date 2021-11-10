@@ -59,13 +59,14 @@ public class MainWindow extends Application {
             @Override
             public void handle(MouseEvent me) {
                 if (me.getButton().equals(MouseButton.PRIMARY)) {
-                    if (me.getClickCount() == 2) {
-                        if (me.getX() >= mediaView.getFitWidth() / 2) {
+                    if (me.getClickCount() >= 2) {
+                        if (me.getX() >= (3 * mediaView.getFitWidth()) / 4) {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() + 10000));
-                        } else {
+                        } else if (me.getX() <= (mediaView.getFitWidth()) / 4) {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() - 10000));
                         }
-                    } else {
+                        mediaPlayer.play();
+                    } else if (me.getClickCount() == 1) {
                         MediaPlayer.Status status = mediaPlayer.getStatus();
                         if (status == MediaPlayer.Status.PLAYING) {
                             if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
