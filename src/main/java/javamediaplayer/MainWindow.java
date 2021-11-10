@@ -1,18 +1,22 @@
 package javamediaplayer;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -61,6 +65,21 @@ public class MainWindow extends Application {
         stage.getIcons().add(new Image("file:src/main/java/javamediaplayer/assets/icon.png"));
         stage.setScene(scene);
         stage.show();
+
+            mediaView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                if(me.getButton().equals(MouseButton.PRIMARY)) {
+                    if (me.getClickCount() == 2) {
+                        if (me.getX() >= mediaView.getFitWidth() / 2) {
+                            mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() + 10000));
+                        } else {
+                            mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() - 10000));
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
