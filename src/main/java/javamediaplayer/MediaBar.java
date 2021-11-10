@@ -153,7 +153,6 @@ public class MediaBar extends AnchorPane {
         mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
         mediaPlayer.rateProperty().bind(speedBox.speedSlider.valueProperty());
         getChildren().addAll(btnBackward, btnPlay, btnForward, progressSlider, volBox, speedBox, timeLabel);
-
     }
 
     public void relocateX(double w) {
