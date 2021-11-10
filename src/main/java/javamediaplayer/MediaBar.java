@@ -145,9 +145,11 @@ public class MediaBar extends AnchorPane {
         });
 
         timeLabel.textProperty().bind(Bindings.createStringBinding(() -> {
-            Duration time = mediaPlayer.getCurrentTime();
-            return String.format("%4d:%02d:%02d", (int) time.toHours(), (int) time.toMinutes() % 60,
-                    (int) time.toSeconds() % 60);
+            Duration totalTime = mediaPlayer.getTotalDuration();
+            Duration currentTime = mediaPlayer.getCurrentTime();
+            return String.format("%d:%02d:%02d/%d:%02d:%02d", (int) currentTime.toHours(),
+                    (int) currentTime.toMinutes() % 60, (int) currentTime.toSeconds() % 60, (int) totalTime.toHours(),
+                    (int) totalTime.toMinutes() % 60, (int) totalTime.toSeconds() % 60);
         }, mediaPlayer.currentTimeProperty()));
 
         mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
