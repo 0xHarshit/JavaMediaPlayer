@@ -145,6 +145,8 @@ public class MainWindow extends Application {
                                         Insets.EMPTY);
                                 Background bg = new Background(bg_fill);
                                 borderPane.setBackground(bg);
+                                mediaBar.relocateX(borderPane.getWidth());
+                                mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
                             } else {
                                 borderPane.setPadding(new Insets(0, 0, 0, 0));
                                 borderPane.setBottom(null);
