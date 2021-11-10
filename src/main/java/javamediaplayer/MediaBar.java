@@ -1,25 +1,19 @@
 package javamediaplayer;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 class BtnForward extends Button {
     public BtnForward(MediaPlayer mediaPlayer) {
         setText(">");
-        setPrefSize(32, 32);
+        setPrefSize(26, 26);
+        setLayoutX(134);
+        setLayoutY(30);
         setOnAction(e -> {
             mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.millis(10000)));
         });
@@ -29,116 +23,122 @@ class BtnForward extends Button {
 class BtnBackward extends Button {
     public BtnBackward(MediaPlayer mediaPlayer) {
         setText("<");
-        setPrefSize(32, 32);
+        setPrefSize(26, 26);
+        setLayoutX(20);
+        setLayoutY(30);
         setOnAction(e -> {
             mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.millis(10000)));
         });
     }
 }
 
-public class MediaBar extends AnchorPane {
-    private Button btnPlay;
-    private Slider progressSlider;
-    private ComboBox vol;
-    private ComboBox speed;
-    private Slider volSlider;
-    private Slider speedSlider;
-    private Button btnForward;
-    private Button btnBackward;
+class BtnPlay extends Button {
+    public BtnPlay(MediaPlayer mediaPlayer) {
+        setText("PAUSE");
+        setLayoutX(60);
+        setLayoutY(30);
+        setPrefSize(60, 26);
+        setOnAction(e -> {
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == MediaPlayer.Status.PLAYING) {
+                if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
+                    mediaPlayer.seek(mediaPlayer.getStartTime());
+                    mediaPlayer.play();
+                } else {
+                    mediaPlayer.pause();
+                    setText("PLAY");
+                }
+            }
+            if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
+                    || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
+                mediaPlayer.play();
+                setText("PAUSE");
+            }
+        });
+    }
+}
 
-    public MediaBar(MediaPlayer mediaPlayer) {
+class ProgressSlider extends Slider {
+    public ProgressSlider(MediaPlayer mediaPlayer) {
+        setPrefWidth(500);
+        setPrefSize(692, 14);
+        setLayoutX(54);
+        valueProperty().addListener((ob, old, ne) -> {
+            if (isPressed())
+                mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(getValue() / 100));
+        });
+    }
+}
 
-        speedSlider = new Slider(0.25, 2, 0.25);
+class VolBox extends ComboBox {
+    Slider volSlider;
+
+    public VolBox() {
+        volSlider = new Slider(0, 100, 100);
+        // volSlider.setBlockIncrement(1);
+        // volSlider.setMajorTickUnit(1);
+        // volSlider.setMinorTickCount(0);
+        // volSlider.setSnapToTicks(true);
+        volSlider.setShowTickMarks(true);
+        volSlider.setShowTickLabels(true);
+
+        volSlider.setOrientation(Orientation.VERTICAL);
+
+        setLayoutX(603);
+        setLayoutY(30);
+        setPromptText("Volume");
+        getItems().add(volSlider);
+    }
+}
+
+class SpeedBox extends ComboBox {
+    Slider speedSlider;
+
+    public SpeedBox() {
+        speedSlider = new Slider(0.25, 2, 1);
         speedSlider.setBlockIncrement(0.25);
         speedSlider.setMajorTickUnit(0.25);
         speedSlider.setMinorTickCount(0);
         speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
         speedSlider.setSnapToTicks(true);
-        speedSlider.setValue(1);
 
-        btnPlay = new Button("PLAY");
-        btnPlay.setLayoutY(30);
-        btnPlay.setLayoutX(60);
-        btnPlay.setPrefSize(60, 26);
-
-        btnForward = new BtnForward(mediaPlayer);
-        btnBackward = new BtnBackward(mediaPlayer);
-        btnForward.setLayoutY(30);
-        btnForward.setLayoutX(134);
-        btnForward.setPrefSize(26, 26);
-        btnBackward.setLayoutY(30);
-        btnBackward.setLayoutX(20);
-        btnBackward.setPrefSize(26, 26);
-        // System.out.println(btnForward.getWidth());
-        vol = new ComboBox();
-        speed = new ComboBox();
-        volSlider = new Slider();
-        volSlider.setOrientation(Orientation.VERTICAL);
         speedSlider.setOrientation(Orientation.VERTICAL);
-        vol.getItems().add(volSlider);
-        speed.getItems().add(speedSlider);
-        volSlider.setValue(50);
 
-        vol.setLayoutX(603);
-        vol.setLayoutY(30);
-        vol.setPromptText("Volume");
-        speed.setLayoutX(701);
-        speed.setLayoutY(30);
-        speed.setPromptText("Speed");
+        setLayoutX(701);
+        setLayoutY(30);
+        setPromptText("Speed");
+        getItems().add(speedSlider);
+    }
+}
 
-        progressSlider = new Slider();
-        progressSlider.setPrefWidth(500);
-        progressSlider.setPrefSize(692, 14);
-        progressSlider.setLayoutX(54);
+public class MediaBar extends AnchorPane {
+    private VolBox volBox;
+    private SpeedBox speedBox;
+    private ProgressSlider progressSlider;
+
+    public MediaBar(MediaPlayer mediaPlayer) {
+        BtnPlay btnPlay = new BtnPlay(mediaPlayer);
+        BtnForward btnForward = new BtnForward(mediaPlayer);
+        BtnBackward btnBackward = new BtnBackward(mediaPlayer);
+        progressSlider = new ProgressSlider(mediaPlayer);
+        volBox = new VolBox();
+        speedBox = new SpeedBox();
 
         mediaPlayer.currentTimeProperty().addListener((ob, old, n) -> {
             Double duration = mediaPlayer.getTotalDuration().toSeconds();
             Double CurrTime = mediaPlayer.getCurrentTime().toSeconds();
             progressSlider.setValue((CurrTime / duration) * 100);
-
         });
-        progressSlider.valueProperty().addListener((ob, old, ne) -> {
 
-            if (progressSlider.isPressed())
-                mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(progressSlider.getValue() / 100));
-        });
-        btnPlay.setOnAction(e -> {
-            MediaPlayer.Status status = mediaPlayer.getStatus();
-            System.out.println(status); // To get the status of Player
-            if (status == MediaPlayer.Status.PLAYING) {
-                // If the status is Video playing
-                if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
-
-                    // If the player is at the end of video
-                    mediaPlayer.seek(mediaPlayer.getStartTime()); // Restart the video
-                    mediaPlayer.play();
-                } else {
-                    // Pausing the player
-                    mediaPlayer.pause();
-                    btnPlay.setText("PLAY");
-                }
-            } // If the video is stopped, halted or paused
-            if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
-                    || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
-                mediaPlayer.play(); // Start the video
-                btnPlay.setText("PAUSE");
-            }
-        });
-        mediaPlayer.volumeProperty().bind(volSlider.valueProperty().divide(100));
-        mediaPlayer.rateProperty().bind(speedSlider.valueProperty());
-        getChildren().add(btnPlay);
-        getChildren().add(progressSlider);
-        getChildren().add(vol);
-        getChildren().add(speed);
-        getChildren().add(btnBackward);
-        getChildren().add(btnForward);
+        mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
+        mediaPlayer.rateProperty().bind(speedBox.speedSlider.valueProperty());
+        getChildren().addAll(btnBackward, btnPlay, btnForward, progressSlider, volBox, speedBox);
     }
 
     public void relocateX(double w) {
-        speed.setLayoutX(w - 150);
-        vol.setLayoutX(w - 250);
-        // btnPlay.setLayoutX((w / 800) * 60);
+        speedBox.setLayoutX(w - 150);
+        volBox.setLayoutX(w - 250);
         progressSlider.setPrefWidth((w / 800) * 692);
-
     }
 }

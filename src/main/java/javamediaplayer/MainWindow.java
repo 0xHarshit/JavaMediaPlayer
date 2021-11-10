@@ -2,15 +2,11 @@ package javamediaplayer;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -30,19 +26,12 @@ public class MainWindow extends Application {
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
 
-    // private String MEDIA_URL =
-    // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-    // private String MEDIA_URL = "./song.mp3";
-    // String s = getClass().getResourceAsStream("song.mp3").toString();
-    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
-    // private java.io.File icon = new
-    // java.io.File("./src/main/java/javamediaplayer/assets/icon.png");
+    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/song.mp3");
     private String MEDIA_URL = file.toURI().toString();
 
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Java Media Player");
-
         borderPane = new BorderPane();
         media = new Media(MEDIA_URL);
         mediaPlayer = new MediaPlayer(media);
@@ -66,10 +55,10 @@ public class MainWindow extends Application {
         stage.setScene(scene);
         stage.show();
 
-            mediaView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        mediaView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
-                if(me.getButton().equals(MouseButton.PRIMARY)) {
+                if (me.getButton().equals(MouseButton.PRIMARY)) {
                     if (me.getClickCount() == 2) {
                         if (me.getX() >= mediaView.getFitWidth() / 2) {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() + 10000));
