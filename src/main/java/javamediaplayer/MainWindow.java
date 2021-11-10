@@ -26,7 +26,7 @@ public class MainWindow extends Application {
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
 
-    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/song.mp3");
+    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
     private String MEDIA_URL = file.toURI().toString();
 
     @Override
@@ -64,6 +64,20 @@ public class MainWindow extends Application {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() + 10000));
                         } else {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() - 10000));
+                        }
+                    } else {
+                        MediaPlayer.Status status = mediaPlayer.getStatus();
+                        if (status == MediaPlayer.Status.PLAYING) {
+                            if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
+                                mediaPlayer.seek(mediaPlayer.getStartTime());
+                                mediaPlayer.play();
+                            } else {
+                                mediaPlayer.pause();
+                            }
+                        }
+                        if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
+                                || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
+                            mediaPlayer.play();
                         }
                     }
                 }

@@ -36,7 +36,16 @@ class BtnBackward extends Button {
 
 class BtnPlay extends Button {
     public BtnPlay(MediaPlayer mediaPlayer) {
-        setText("PAUSE");
+
+        textProperty().bind(Bindings.createStringBinding(() -> {
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == MediaPlayer.Status.PLAYING) {
+                return "PAUSE";
+            } else {
+                return "PLAY";
+            }
+        }, mediaPlayer.statusProperty()));
+
         setLayoutX(60);
         setLayoutY(30);
         setPrefSize(60, 26);
@@ -48,13 +57,11 @@ class BtnPlay extends Button {
                     mediaPlayer.play();
                 } else {
                     mediaPlayer.pause();
-                    setText("PLAY");
                 }
             }
             if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
                     || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
                 mediaPlayer.play();
-                setText("PAUSE");
             }
         });
     }
@@ -139,8 +146,8 @@ public class MediaBar extends AnchorPane {
 
         timeLabel.textProperty().bind(Bindings.createStringBinding(() -> {
             Duration time = mediaPlayer.getCurrentTime();
-            return String.format("%4d:%02d:%04.1f", (int) time.toHours(), (int) time.toMinutes() % 60,
-                    time.toSeconds() % 3600);
+            return String.format("%4d:%02d:%02d", (int) time.toHours(), (int) time.toMinutes() % 60,
+                    (int) time.toSeconds() % 60);
         }, mediaPlayer.currentTimeProperty()));
 
         mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
