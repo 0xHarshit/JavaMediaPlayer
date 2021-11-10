@@ -151,9 +151,12 @@ public class MediaBar extends AnchorPane {
                     (int) currentTime.toMinutes() % 60, (int) currentTime.toSeconds() % 60, (int) totalTime.toHours(),
                     (int) totalTime.toMinutes() % 60, (int) totalTime.toSeconds() % 60);
         }, mediaPlayer.currentTimeProperty()));
-
-        mediaPlayer.volumeProperty().bind(volBox.volSlider.valueProperty().divide(100));
-        mediaPlayer.rateProperty().bind(speedBox.speedSlider.valueProperty());
+        volBox.volSlider.valueProperty().addListener(e -> {
+            mediaPlayer.setVolume(volBox.volSlider.valueProperty().doubleValue() / 100);
+        });
+        speedBox.speedSlider.valueProperty().addListener(e -> {
+            mediaPlayer.setRate(speedBox.speedSlider.valueProperty().doubleValue());
+        });
         getChildren().addAll(btnBackward, btnPlay, btnForward, progressSlider, volBox, speedBox, timeLabel);
     }
 
