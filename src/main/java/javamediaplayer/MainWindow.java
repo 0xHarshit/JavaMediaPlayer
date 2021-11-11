@@ -64,7 +64,7 @@ public class MainWindow extends Application {
     MouseStatus mouseStatus = new MouseStatus();
     AnimationTimer loop = new AnimationTimer() {
 
-        long deltaNs = 1000_000_000;
+        long deltaNs = 2000_000_000;
 
         double currX;
         double currY;
@@ -80,7 +80,6 @@ public class MainWindow extends Application {
             currX = mouseStatus.x;
             currY = mouseStatus.y;
             currNs = now;
-
             if (currNs - prevNs > deltaNs) {
 
                 if (prevX == currX && prevY == currY) {
@@ -180,14 +179,20 @@ public class MainWindow extends Application {
         scene.addEventFilter(MouseEvent.ANY, e -> {
             if (stage.isFullScreen()) {
                 mediaBar2.relocateX(stage.getWidth());
-                popup.show(stage, 0, (stage.getHeight()));
+                if (!popup.isShowing()) {
+                    popup.show(stage, 0, (stage.getHeight()));
+                }
             } else {
                 popup.hide();
             }
-
             mouseStatus.setX(e.getX());
             mouseStatus.setY(e.getY());
             loop.start();
+        });
+        popup.addEventFilter(MouseEvent.ANY, e -> {
+            if (stage.isFullScreen()) {
+                loop.stop();
+            }
         });
     }
 
