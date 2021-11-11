@@ -18,6 +18,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -52,7 +53,7 @@ public class MainWindow extends Application {
     private BorderPane borderPane;
     private MediaBar mediaBar;
     private MediaBar mediaBar2;
-
+    private Button btnFile;
     private Media media;
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
@@ -96,6 +97,30 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        btnFile = new Button("File");
+        btnFile.setOnAction(e -> {
+
+            System.out.println("here");
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Media...");
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP4 Video", "*.mp4"),
+                    new FileChooser.ExtensionFilter("MP3 Music", "*.mp3"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+            file = fileChooser.showOpenDialog(new Stage());
+            if (file != null) {
+                mediaPlayer.stop();
+                media = new Media(file.toURI().toString());
+                mediaPlayer = new MediaPlayer(media);
+                mediaView.setMediaPlayer(mediaPlayer);
+                mediaPlayer.setAutoPlay(true);
+                mediaBar = new MediaBar(mediaPlayer);
+                mediaBar2 = new MediaBar(mediaPlayer);
+                popup.getContent().add(mediaBar2);
+                borderPane.setBottom(mediaBar);
+            }
+
+        });
         stage.setTitle("Java Media Player");
         borderPane = new BorderPane();
         media = new Media(MEDIA_URL);
@@ -106,6 +131,7 @@ public class MainWindow extends Application {
         mediaView.setFitWidth(700);
         mediaBar = new MediaBar(mediaPlayer);
 
+        borderPane.setTop(btnFile);
         borderPane.setCenter(mediaView);
         borderPane.setBottom(mediaBar);
         borderPane.setPadding(new Insets(10, 20, 10, 20));
@@ -128,6 +154,7 @@ public class MainWindow extends Application {
         stage.fullScreenProperty().addListener(e -> {
             if (!stage.isFullScreen()) {
                 borderPane.setBottom(mediaBar);
+                borderPane.setTop(btnFile);
                 borderPane.setPadding(new Insets(10, 20, 10, 20));
                 BackgroundFill bg_fill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
                 Background bg = new Background(bg_fill);
@@ -135,6 +162,7 @@ public class MainWindow extends Application {
                 mediaBar.relocateX(borderPane.getWidth());
                 mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
             } else {
+                borderPane.setTop(null);
                 borderPane.setPadding(new Insets(0, 0, 0, 0));
                 borderPane.setBottom(null);
                 BackgroundFill bg_fill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY);
