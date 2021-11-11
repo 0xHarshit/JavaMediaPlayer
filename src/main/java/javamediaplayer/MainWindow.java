@@ -100,7 +100,6 @@ public class MainWindow extends Application {
         btnFile = new Button("File");
         btnFile.setOnAction(e -> {
 
-            System.out.println("here");
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Media...");
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP4 Video", "*.mp4"),
