@@ -125,7 +125,23 @@ public class MainWindow extends Application {
         popup = new Popup();
         mediaBar2 = new MediaBar(mediaPlayer);
         popup.getContent().add(mediaBar2);
-
+        stage.fullScreenProperty().addListener(e -> {
+            if (!stage.isFullScreen()) {
+                borderPane.setBottom(mediaBar);
+                borderPane.setPadding(new Insets(10, 20, 10, 20));
+                BackgroundFill bg_fill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
+                Background bg = new Background(bg_fill);
+                borderPane.setBackground(bg);
+                mediaBar.relocateX(borderPane.getWidth());
+                mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
+            } else {
+                borderPane.setPadding(new Insets(0, 0, 0, 0));
+                borderPane.setBottom(null);
+                BackgroundFill bg_fill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY);
+                Background bg = new Background(bg_fill);
+                borderPane.setBackground(bg);
+            }
+        });
         mediaView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
@@ -137,24 +153,10 @@ public class MainWindow extends Application {
                             mediaPlayer.seek(new Duration(mediaPlayer.getCurrentTime().toMillis() - 10000));
                         } else {
                             if (stage.isFullScreen()) {
-                                borderPane.setBottom(mediaBar);
                                 stage.setFullScreen(false);
-                                borderPane.setPadding(new Insets(10, 20, 10, 20));
-                                BackgroundFill bg_fill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY,
-                                        Insets.EMPTY);
-                                Background bg = new Background(bg_fill);
-                                borderPane.setBackground(bg);
-                                mediaBar.relocateX(borderPane.getWidth());
-                                mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
                             } else {
-                                borderPane.setPadding(new Insets(0, 0, 0, 0));
-                                borderPane.setBottom(null);
                                 stage.setFullScreen(true);
                                 mediaView.setFitWidth(stage.getWidth());
-                                BackgroundFill bg_fill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY,
-                                        Insets.EMPTY);
-                                Background bg = new Background(bg_fill);
-                                borderPane.setBackground(bg);
                             }
                         }
                         mediaPlayer.play();
