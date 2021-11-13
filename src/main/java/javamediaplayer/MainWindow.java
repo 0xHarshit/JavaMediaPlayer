@@ -116,6 +116,8 @@ public class MainWindow extends Application {
                 mediaPlayer.setAutoPlay(true);
                 mediaBar = new MediaBar(mediaPlayer);
                 mediaBar2 = new MediaBar(mediaPlayer);
+                mediaBar.relocateX(borderPane.getWidth());
+                mediaBar2.relocateX(borderPane.getWidth());
                 popup.getContent().add(mediaBar2);
                 borderPane.setBottom(mediaBar);
             }
