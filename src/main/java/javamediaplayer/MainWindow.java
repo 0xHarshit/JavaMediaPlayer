@@ -115,6 +115,7 @@ public class MainWindow extends Application {
                 media = new Media(file.toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
                 mediaView.setMediaPlayer(mediaPlayer);
+                mediaView.setFitHeight(Math.min(mediaView.getFitWidth(), 700));
                 mediaPlayer.setAutoPlay(true);
                 mediaBar = new MediaBar(mediaPlayer);
                 mediaBar2 = new MediaBar(mediaPlayer);
