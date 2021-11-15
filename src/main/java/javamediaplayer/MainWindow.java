@@ -133,7 +133,7 @@ public class MainWindow extends Application {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("File : " + currFile.getAbsolutePath());
             alert.setHeaderText("File Type : " + currFile.getAbsolutePath().substring(i+1));
-            alert.setContentText("Duration : " + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100);
+            alert.setContentText("Duration : " + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100 + " seconds");
             alert.showAndWait();
 
         });
