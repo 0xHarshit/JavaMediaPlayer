@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -53,13 +54,14 @@ public class MainWindow extends Application {
     private BorderPane borderPane;
     private MediaBar mediaBar;
     private MediaBar mediaBar2;
-    private Button btnFile;
+    private Button btnFile,btnInfo;
     private Media media;
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
     private Popup popup;
 
     private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
+    private java.io.File currFile = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
     private String MEDIA_URL = file.toURI().toString();
 
     MouseStatus mouseStatus = new MouseStatus();
@@ -108,6 +110,7 @@ public class MainWindow extends Application {
 
             file = fileChooser.showOpenDialog(new Stage());
             if (file != null) {
+                currFile = file;
                 mediaPlayer.stop();
                 media = new Media(file.toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
@@ -122,8 +125,25 @@ public class MainWindow extends Application {
             }
 
         });
+
+        btnInfo = new Button("Info");
+        btnInfo.setOnAction(e -> {
+
+            int i = currFile.getAbsolutePath().lastIndexOf('.');
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("File : " + currFile.getAbsolutePath());
+            alert.setHeaderText("File Type : " + currFile.getAbsolutePath().substring(i+1));
+            alert.setContentText("Duration : " + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100);
+            alert.showAndWait();
+
+        });
+
         stage.setTitle("Java Media Player");
         borderPane = new BorderPane();
+        borderPane = new BorderPane();
+        BorderPane topBar = new BorderPane();
+        topBar.setLeft(btnFile);
+        topBar.setRight(btnInfo);
         media = new Media(MEDIA_URL);
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
@@ -132,7 +152,7 @@ public class MainWindow extends Application {
         mediaView.setFitWidth(700);
         mediaBar = new MediaBar(mediaPlayer);
 
-        borderPane.setTop(btnFile);
+        borderPane.setTop(topBar);
         borderPane.setCenter(mediaView);
         borderPane.setBottom(mediaBar);
         borderPane.setPadding(new Insets(10, 20, 10, 20));
@@ -155,7 +175,7 @@ public class MainWindow extends Application {
         stage.fullScreenProperty().addListener(e -> {
             if (!stage.isFullScreen()) {
                 borderPane.setBottom(mediaBar);
-                borderPane.setTop(btnFile);
+                borderPane.setTop(topBar);
                 borderPane.setPadding(new Insets(10, 20, 10, 20));
                 BackgroundFill bg_fill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
                 Background bg = new Background(bg_fill);
