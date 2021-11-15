@@ -71,7 +71,7 @@ class ProgressSlider extends Slider {
     public ProgressSlider(MediaPlayer mediaPlayer) {
         setPrefWidth(500);
         setPrefSize(692, 14);
-        setLayoutX(54);
+        setLayoutX(80);
         valueProperty().addListener((ob, old, ne) -> {
             if (isPressed())
                 mediaPlayer.seek(mediaPlayer.getTotalDuration().multiply(getValue() / 100));
