@@ -182,6 +182,8 @@ public class MainWindow extends Application {
                 borderPane.setBottom(mediaBar);
                 borderPane.setTop(topBar);
                 borderPane.setPadding(new Insets(10, 20, 10, 20));
+                Color c = Color.rgb(0, 0, 0);
+                mediaBar.colorchange(c);
                 BackgroundFill bg_fill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
                 Background bg = new Background(bg_fill);
                 borderPane.setBackground(bg);
@@ -194,6 +196,8 @@ public class MainWindow extends Application {
                 BackgroundFill bg_fill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY);
                 Background bg = new Background(bg_fill);
                 borderPane.setBackground(bg);
+                Color c = Color.rgb(255, 255, 255);
+                mediaBar2.colorchange(c);
             }
         });
         mediaView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -236,7 +240,7 @@ public class MainWindow extends Application {
             if (stage.isFullScreen()) {
                 mediaBar2.relocateX(stage.getWidth());
                 if (!popup.isShowing()) {
-                    popup.show(stage, 0, (stage.getHeight()));
+                    popup.show(stage, 20, (stage.getHeight()));
                 }
             } else {
                 popup.hide();

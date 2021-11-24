@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 class BtnForward extends Button {
@@ -164,5 +165,9 @@ public class MediaBar extends AnchorPane {
         speedBox.setLayoutX(w - 150);
         volBox.setLayoutX(w - 250);
         progressSlider.setPrefWidth((w / 800) * 692);
+    }
+
+    public void colorchange(Color c) {
+        timeLabel.setTextFill(c);
     }
 }
