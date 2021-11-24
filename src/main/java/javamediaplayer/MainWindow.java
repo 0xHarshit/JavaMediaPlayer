@@ -54,7 +54,7 @@ public class MainWindow extends Application {
     private BorderPane borderPane;
     private MediaBar mediaBar;
     private MediaBar mediaBar2;
-    private Button btnFile,btnInfo;
+    private Button btnFile, btnInfo;
     private Media media;
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
@@ -115,12 +115,15 @@ public class MainWindow extends Application {
                 media = new Media(file.toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
                 mediaView.setMediaPlayer(mediaPlayer);
-                mediaView.setFitHeight(Math.min(mediaView.getFitWidth(), 700));
+                // mediaView.setFitHeight(Math.min(mediaView.getFitWidth(), 700));
+                mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
+                // mediaView.setFitWidth(stage.getWidth());
                 mediaPlayer.setAutoPlay(true);
                 mediaBar = new MediaBar(mediaPlayer);
                 mediaBar2 = new MediaBar(mediaPlayer);
                 mediaBar.relocateX(borderPane.getWidth());
                 mediaBar2.relocateX(borderPane.getWidth());
+                popup.getContent().clear();
                 popup.getContent().add(mediaBar2);
                 borderPane.setBottom(mediaBar);
             }
@@ -133,8 +136,9 @@ public class MainWindow extends Application {
             int i = currFile.getAbsolutePath().lastIndexOf('.');
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("File : " + currFile.getAbsolutePath());
-            alert.setHeaderText("File Type : " + currFile.getAbsolutePath().substring(i+1));
-            alert.setContentText("Duration : " + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100 + " seconds");
+            alert.setHeaderText("File Type : " + currFile.getAbsolutePath().substring(i + 1));
+            alert.setContentText("Duration : "
+                    + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100 + " seconds");
             alert.showAndWait();
 
         });
