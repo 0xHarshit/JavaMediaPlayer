@@ -248,14 +248,17 @@ public class MainWindow extends Application {
                 }
                 mouseStatus.setY(e.getY());
                 mouseStatus.setX(e.getX());
+
                 loop.start();
             } else {
+                scene.setCursor(Cursor.DEFAULT);
                 popup.hide();
                 loop.stop();
             }
         });
         popup.addEventFilter(MouseEvent.ANY, e -> {
             if (stage.isFullScreen()) {
+                scene.setCursor(Cursor.DEFAULT);
                 loop.stop();
             }
         });
