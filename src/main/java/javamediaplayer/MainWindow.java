@@ -4,13 +4,13 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -59,10 +59,10 @@ public class MainWindow extends Application {
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
     private Popup popup;
+    private BorderPane topBar;
 
-    private java.io.File file = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
-    private java.io.File currFile = new java.io.File("./src/main/java/javamediaplayer/assets/video.mp4");
-    private String MEDIA_URL = file.toURI().toString();
+    private java.io.File file;
+    private java.io.File currFile;
 
     MouseStatus mouseStatus = new MouseStatus();
     AnimationTimer loop = new AnimationTimer() {
@@ -87,6 +87,7 @@ public class MainWindow extends Application {
 
                 if (prevX == currX && prevY == currY) {
                     popup.hide();
+                    scene.setCursor(Cursor.NONE);
                 }
 
                 prevX = currX;
@@ -111,23 +112,55 @@ public class MainWindow extends Application {
             file = fileChooser.showOpenDialog(new Stage());
             if (file != null) {
                 currFile = file;
-                mediaPlayer.stop();
+                if (mediaPlayer != null)
+                    mediaPlayer.stop();
                 media = new Media(file.toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
-                mediaView.setMediaPlayer(mediaPlayer);
-                // mediaView.setFitHeight(Math.min(mediaView.getFitWidth(), 700));
+                // mediaView.setMediaPlayer(mediaPlayer);
+                mediaView = new MediaView(mediaPlayer);
                 mediaView.setFitWidth((borderPane.getWidth() / 800) * 600);
-                // mediaView.setFitWidth(stage.getWidth());
                 mediaPlayer.setAutoPlay(true);
                 mediaBar = new MediaBar(mediaPlayer);
                 mediaBar2 = new MediaBar(mediaPlayer);
                 mediaBar.relocateX(borderPane.getWidth());
                 mediaBar2.relocateX(borderPane.getWidth());
-                popup.getContent().clear();
-                popup.getContent().add(mediaBar2);
+                if (popup != null) {
+
+                    popup.getContent().clear();
+                    popup.getContent().add(mediaBar2);
+                }
                 borderPane.setBottom(mediaBar);
+                borderPane.setCenter(mediaView);
+                topBar = new BorderPane();
+                topBar.setLeft(btnFile);
+                // topBar.setRight(btnInfo);
+                borderPane.setTop(topBar);
+                mediaStart(stage);
             }
 
+        });
+
+        stage.setTitle("Java Media Player");
+        borderPane = new BorderPane();
+        borderPane.setCenter(btnFile);
+        borderPane.setPadding(new Insets(10, 20, 10, 20));
+        scene = new Scene(borderPane, 800, 600);
+        stage.getIcons().add(new Image("file:src/main/java/javamediaplayer/assets/icon.png"));
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+
+    public void mediaStart(Stage stage) {
+        borderPane.widthProperty().addListener((ob, old, ne) -> {
+            if (!stage.isFullScreen()) {
+                mediaBar.relocateX(ne.doubleValue());
+                mediaView.setFitWidth((ne.doubleValue() / 800) * 600);
+            }
         });
 
         btnInfo = new Button("Info");
@@ -140,40 +173,8 @@ public class MainWindow extends Application {
             alert.setContentText("Duration : "
                     + (double) Math.round(mediaPlayer.getTotalDuration().toSeconds() * 100) / 100 + " seconds");
             alert.showAndWait();
-
         });
-
-        stage.setTitle("Java Media Player");
-        borderPane = new BorderPane();
-        borderPane = new BorderPane();
-        BorderPane topBar = new BorderPane();
-        topBar.setLeft(btnFile);
         topBar.setRight(btnInfo);
-        media = new Media(MEDIA_URL);
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setOnReady(stage::sizeToScene);
-        mediaView = new MediaView(mediaPlayer);
-        mediaView.setFitWidth(700);
-        mediaBar = new MediaBar(mediaPlayer);
-
-        borderPane.setTop(topBar);
-        borderPane.setCenter(mediaView);
-        borderPane.setBottom(mediaBar);
-        borderPane.setPadding(new Insets(10, 20, 10, 20));
-
-        borderPane.widthProperty().addListener((ob, old, ne) -> {
-            if (!stage.isFullScreen()) {
-                mediaBar.relocateX(ne.doubleValue());
-                mediaView.setFitWidth((ne.doubleValue() / 800) * 600);
-            }
-        });
-
-        scene = new Scene(borderPane, 800, 600);
-        stage.getIcons().add(new Image("file:src/main/java/javamediaplayer/assets/icon.png"));
-        stage.setScene(scene);
-        stage.show();
-
         popup = new Popup();
         mediaBar2 = new MediaBar(mediaPlayer);
         popup.getContent().add(mediaBar2);
@@ -219,18 +220,20 @@ public class MainWindow extends Application {
                         }
                         mediaPlayer.play();
                     } else if (me.getClickCount() == 1) {
-                        MediaPlayer.Status status = mediaPlayer.getStatus();
-                        if (status == MediaPlayer.Status.PLAYING) {
-                            if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
-                                mediaPlayer.seek(mediaPlayer.getStartTime());
-                                mediaPlayer.play();
-                            } else {
-                                mediaPlayer.pause();
+                        if (mediaPlayer != null) {
+                            MediaPlayer.Status status = mediaPlayer.getStatus();
+                            if (status == MediaPlayer.Status.PLAYING) {
+                                if (mediaPlayer.getCurrentTime().greaterThanOrEqualTo(mediaPlayer.getTotalDuration())) {
+                                    mediaPlayer.seek(mediaPlayer.getStartTime());
+                                    mediaPlayer.play();
+                                } else {
+                                    mediaPlayer.pause();
+                                }
                             }
-                        }
-                        if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
-                                || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
-                            mediaPlayer.play();
+                            if (status == MediaPlayer.Status.HALTED || status == MediaPlayer.Status.STOPPED
+                                    || status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY) {
+                                mediaPlayer.play();
+                            }
                         }
                     }
                 }
@@ -241,22 +244,20 @@ public class MainWindow extends Application {
                 mediaBar2.relocateX(stage.getWidth());
                 if (!popup.isShowing()) {
                     popup.show(stage, 20, (stage.getHeight()));
+                    scene.setCursor(Cursor.DEFAULT);
                 }
+                mouseStatus.setY(e.getY());
+                mouseStatus.setX(e.getX());
+                loop.start();
             } else {
                 popup.hide();
+                loop.stop();
             }
-            mouseStatus.setX(e.getX());
-            mouseStatus.setY(e.getY());
-            loop.start();
         });
         popup.addEventFilter(MouseEvent.ANY, e -> {
             if (stage.isFullScreen()) {
                 loop.stop();
             }
         });
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }
