@@ -20,5 +20,5 @@ Group No. - 2
 
 # Screenshot :-
 
-​	![](C:\Users\shrey\Downloads\Screenshot (83).png) 
+​	![Screenshot](https://github.com/0xHarshit/JavaMediaPlayer/blob/master/src/main/java/javamediaplayer/assets/Screenshot%20(83)%20(1).png) 
 
